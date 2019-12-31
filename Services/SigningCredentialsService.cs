@@ -32,7 +32,7 @@ namespace ConsoleOutput.Services
 
         public SymmetricSecurityKey GetKey()
         {
-            var key = Configuration.GetValue<string>("mySuperSecretKey");
+            var key = Configuration.GetValue<string>("secretKey");
             var securityKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(key));
             return securityKey;
         }
