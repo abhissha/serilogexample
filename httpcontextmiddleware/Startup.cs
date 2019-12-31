@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
 
 namespace HttpContextMiddleware
 {
@@ -27,17 +26,7 @@ namespace HttpContextMiddleware
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ITokenService, TokenService>();
             services.AddTransient<ISigningCredentialsService>(x => new SigningCredentialsService(Configuration));
-
-
-            // configure serilog with singleton
-            Log.Logger = new LoggerConfiguration()
-                                .MinimumLevel.Debug()
-                                .Enrich.FromLogContext()
-                                .WriteTo.Console()
-                                .WriteTo.ApplicationInsights(Configuration.GetInstrumentationKey(), TelemetryConverter.Traces)
-                                .CreateLogger();
-
-            services.AddSingleton<Serilog.ILogger>(Log.Logger);
+            services.ConfigureSerilog(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
