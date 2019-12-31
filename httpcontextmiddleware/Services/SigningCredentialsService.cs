@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HttpContextMiddleware.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,7 @@ namespace HttpContextMiddleware.Services
 
         public SymmetricSecurityKey GetKey()
         {
-            var key = Configuration.GetValue<string>("secretKey");
+            var key = Configuration.GetSecretKey();
             var securityKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(key));
             return securityKey;
         }

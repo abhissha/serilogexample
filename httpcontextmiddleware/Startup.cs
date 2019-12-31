@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using HttpContextMiddleware.Extensions;
 using HttpContextMiddleware.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,8 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Serilog;
 
 namespace HttpContextMiddleware
@@ -33,21 +28,13 @@ namespace HttpContextMiddleware
             services.AddSingleton<ITokenService, TokenService>();
             services.AddTransient<ISigningCredentialsService>(x => new SigningCredentialsService(Configuration));
 
-            services.AddAuthentication().AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                {
-                    IssuerSigningKey = new SigningCredentialsService(Configuration).GetKey()
-                };
-            });
-
 
             // configure serilog with singleton
             Log.Logger = new LoggerConfiguration()
                                 .MinimumLevel.Debug()
                                 .Enrich.FromLogContext()
                                 .WriteTo.Console()
-                                .WriteTo.ApplicationInsights(Configuration.GetValue<string>("InstrumentationKey"), TelemetryConverter.Traces)
+                                .WriteTo.ApplicationInsights(Configuration.GetInstrumentationKey(), TelemetryConverter.Traces)
                                 .CreateLogger();
 
             services.AddSingleton<Serilog.ILogger>(Log.Logger);

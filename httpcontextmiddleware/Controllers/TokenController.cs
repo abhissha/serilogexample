@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using HttpContextMiddleware.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace HttpContextMiddleware.Controllers
 {
@@ -26,10 +22,11 @@ namespace HttpContextMiddleware.Controllers
         [HttpPost("generate")]
         public ActionResult GenerateToken()
         {
+            var fakeUserToken = TokenService.CreateFakeUser();
             var claims = new List<Claim>();
-            claims.Add(new Claim("userName", "someUserName"));
-            claims.Add(new Claim("lastName", "some last Name"));
-            claims.Add(new Claim("productName", "some product name"));
+            claims.Add(new Claim("userName", fakeUserToken.UserName));
+            claims.Add(new Claim("lastName", fakeUserToken.LastName));
+            claims.Add(new Claim("productName", fakeUserToken.ProductName));
 
             var token = new JwtSecurityToken(
                 issuer: "issuer",

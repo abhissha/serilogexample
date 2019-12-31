@@ -19,6 +19,16 @@ namespace HttpContextMiddleware.Services
 
     public class TokenService : ITokenService
     {
+        public static UserToken CreateFakeUser()
+        {
+            return new UserToken()
+            {
+                UserName = "fakeUserName",
+                LastName = "Fake Last Name",
+                ProductName = "Fake Product Name"
+            };
+        }
+
         private HttpContext _httpContext;
         public TokenService(IHttpContextAccessor contextAccesor)
         {
