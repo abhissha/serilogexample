@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using Serilog.Formatting.Compact;
 
 namespace HttpContextMiddleware.Extensions
 {
@@ -13,6 +14,7 @@ namespace HttpContextMiddleware.Extensions
                                 .MinimumLevel.Debug()
                                 .Enrich.FromLogContext()
                                 .WriteTo.Console()
+                                .WriteTo.File(new CompactJsonFormatter(), "log.txt", rollingInterval: RollingInterval.Day)
                                 .WriteTo.ApplicationInsights(configuration.GetInstrumentationKey(), TelemetryConverter.Traces)
                                 .CreateLogger();
 

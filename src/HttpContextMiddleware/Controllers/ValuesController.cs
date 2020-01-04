@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HttpContextMiddleware.Services;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -22,8 +23,34 @@ namespace HttpContextMiddleware.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            _logger.Information("logging information should log token information {data}", "fetch");
+            // when token is passed, below log will log claims as well as below data as additional element
+            _logger.Information("log information {data}", "fetch");
+            // way to destructure and log the whole object
+            var @event = IntegrationEvent.CreateFake();
+            _logger.Information("----- Handling integration event: {IntegrationEventId} at ({@IntegrationEvent})", @event.Id, @event);
             return new string[] { "value1", "value2" };
         }
+    }
+
+    public class IntegrationEvent
+    {
+        public static IntegrationEvent CreateFake()
+        {
+            return new IntegrationEvent()
+            {
+                Id= Guid.NewGuid(),
+                Name = "Test Integration Event",
+                CreatedTime = DateTime.UtcNow,
+                Description = "Test Integration Event Description"
+            };
+        }
+
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public DateTimeOffset CreatedTime { get; set; }
+
+        public string Description { get; set; }
     }
 }
